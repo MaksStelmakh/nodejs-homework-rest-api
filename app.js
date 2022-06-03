@@ -2,8 +2,6 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 
-require("dotenv").config();
-
 const contactsRouter = require("./routes/api/contacts");
 
 const app = express();
@@ -18,6 +16,7 @@ app.use("/api/contacts", contactsRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
+  next({ status: 404, message: "Not Found" });
 });
 
 app.use((err, req, res, next) => {
@@ -26,3 +25,5 @@ app.use((err, req, res, next) => {
 });
 
 module.exports = app;
+
+// mongodb+srv://MaksStelmakh:T7AZt6gSCjjaKykV@cluster0.xq8lyhn.mongodb.net/test
