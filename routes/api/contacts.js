@@ -9,16 +9,17 @@ const {
   updateSomething,
 } = require("../../controllers/contacts");
 const { validate } = require("../../middleware/validate");
+const { auth } = require("../../middleware/auth");
 
 const router = express.Router();
 
-router.get("/", getAll);
+router.get("/", auth, getAll);
 
 router.get("/:id", getById);
 
-router.post("/", validate(schemaCreate), createById);
+router.post("/", validate(schemaCreate), auth, createById);
 
-router.delete("/:id", deleteById);
+router.delete("/:id", auth, deleteById);
 
 router.patch("/:id/favorite", validate(schemaPatch), updateSomething);
 
