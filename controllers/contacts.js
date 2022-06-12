@@ -3,7 +3,7 @@ const createError = require("../errors");
 
 const getAll = async (req, res, next) => {
   try {
-    const all = await contacts.listContacts();
+    const all = await contacts.listContacts(req.query);
     res.json({
       status: "success",
       code: 200,
@@ -38,8 +38,9 @@ const getById = async (req, res, next) => {
 
 const createById = async (req, res, next) => {
   try {
+    const { _id } = req.user;
     const contact = req.body;
-    const newContact = await contacts.addContact(contact);
+    const newContact = await contacts.addContact(contact, _id);
     res.status(201).json({
       status: "success",
       code: 201,
