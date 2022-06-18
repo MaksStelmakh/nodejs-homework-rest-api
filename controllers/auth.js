@@ -1,21 +1,26 @@
 const authService = require("../services/auth.service");
 
-const registerUser = async (req, res, next) => {
+const register = async (req, res, next) => {
   try {
     const user = await authService.registerUser(req.body);
-    res.status(201).json({
-      email: user.email,
-      subscription: user.subscription,
+    return res.status(201).json({
+      code: 201,
+      data: {
+        email: user.email,
+        subscription: user.subscription,
+        avatarURL: user.avatarURL,
+      },
     });
   } catch (error) {
     next(error);
   }
 };
 
-const loginUser = async (req, res, next) => {
+const login = async (req, res, next) => {
   try {
     const infoUser = await authService.loginUser(req.body);
-    res.json({
+    return res.json({
+      code: 200,
       token: infoUser.token,
       user: {
         email: infoUser.user.email,
@@ -27,7 +32,7 @@ const loginUser = async (req, res, next) => {
   }
 };
 
-const logOutUser = async (req, res, next) => {
+const logOut = async (req, res, next) => {
   try {
     await authService.logOutUser(req.user._id);
     res.sendStatus(204);
@@ -70,9 +75,9 @@ const currentUser = (req, res, next) => {
 };
 
 module.exports = {
-  registerUser,
-  loginUser,
-  logOutUser,
+  register,
+  login,
+  logOut,
   updateSubscr,
   currentUser,
 };

@@ -1,8 +1,8 @@
 const express = require("express");
 const {
-  registerUser,
-  loginUser,
-  logOutUser,
+  register,
+  login,
+  logOut,
   updateSubscr,
   currentUser,
 } = require("../../controllers/auth");
@@ -16,9 +16,9 @@ const { auth } = require("../../middleware/auth");
 
 const router = express.Router();
 
-router.post("/signup", validate(schemaRegister), registerUser);
-router.post("/login", validate(schemaLogin), loginUser);
-router.post("/logout", auth, logOutUser);
+router.post("/signup", validate(schemaRegister), register);
+router.post("/login", validate(schemaLogin), login);
+router.post("/logout", auth, logOut);
 router.patch("/:id", auth, validate(schemaSubscr), updateSubscr);
 router.get("/current", auth, currentUser);
 
