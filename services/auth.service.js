@@ -23,6 +23,9 @@ const registerUser = async (userData) => {
 
 const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email });
+  if (user && !user.verify) {
+    throw createError(403, "Please confirm your email");
+  }
   if (!user) {
     throw createError(401, "Email or password is wrong");
   }

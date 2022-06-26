@@ -1,8 +1,12 @@
 const authService = require("../services/auth.service");
+const emailService = require("../services/email.service");
+const userService = require("../services/user.service");
+const createError = require("../errors");
 
 const register = async (req, res, next) => {
   try {
     const user = await authService.registerUser(req.body);
+    await emailService.sendEmail(user.email, user.verificationToken);
     return res.status(201).json({
       code: 201,
       data: {
@@ -73,6 +77,49 @@ const currentUser = (req, res, next) => {
     },
   });
 };
+const confirm = async (req, res, next) => {
+  try {
+    const { verificationToken } = req.params;
+    const user = await userService.findUser({ verificationToken });
+    if (!user) {
+      throw createError(404, "User not found");
+    }
+    const result = await userService.updateUser(user._id, {
+      verify: true,
+      verificationToken: null,
+    });
+    return res.status(200).json({
+      code: 200,
+      message: "Verification successful",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const resend = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await userService.findUser({ email });
+    if (!user) {
+      throw createError(404, "User was not found");
+    }
+    if (!user.verify) {
+      throw createError(400, "Verification has already been passed");
+    }
+    const message = await emailService.sendEmail(
+      user.email,
+      user.verificationToken
+    );
+    return res.status(200).json({
+      code: 200,
+      message: "Check your Email",
+      data: message,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   register,
@@ -80,4 +127,6 @@ module.exports = {
   logOut,
   updateSubscr,
   currentUser,
+  confirm,
+  resend,
 };

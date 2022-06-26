@@ -1,6 +1,7 @@
 const { Schema, model } = require("mongoose");
 const Joi = require("joi");
 const gravatar = require("gravatar");
+const { v4 } = require("uuid");
 
 const schemaRegister = Joi.object({
   name: Joi.string().required(),
@@ -16,6 +17,10 @@ const schemaLogin = Joi.object({
 
 const schemaSubscr = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business").required(),
+});
+
+const schemaNewValidate = Joi.object({
+  email: Joi.string().required(),
 });
 
 const schema = new Schema(
@@ -48,6 +53,14 @@ const schema = new Schema(
         return gravatar.url(this.email, {}, true);
       },
     },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      default: () => v4(),
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -59,4 +72,5 @@ module.exports = {
   schemaRegister,
   schemaLogin,
   schemaSubscr,
+  schemaNewValidate,
 };
